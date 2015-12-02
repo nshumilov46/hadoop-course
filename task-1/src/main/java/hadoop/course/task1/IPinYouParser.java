@@ -9,8 +9,10 @@ public class IPinYouParser {
     }
 
     public boolean parse(String record) {
-        String[] split = record.split("\\t");
-        iPinYouId = split[2];
+        String[] tokens = record.split("\\t");
+        if(tokens.length < 3)
+            return false;
+        iPinYouId = tokens[2];
         return true;
     }
 }

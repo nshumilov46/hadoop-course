@@ -15,12 +15,20 @@ public class IpStatisticsMapper extends Mapper<LongWritable, Text, Text, IpStati
     protected void map(LongWritable key, Text value, Context context)
             throws IOException, InterruptedException {
 
-        //TODO Implement counters
-
         if (!parser.parse(value))
             return;
+
         String ip = parser.getIp();
+        String userAgent = parser.getUserAgent();
         long bytesTransferred = parser.getBytesTransfered();
+
+        if (userAgent.startsWith("\"Mozilla"))
+            context.getCounter(UserAgent.MOZILLA).increment(1L);
+        else if (userAgent.startsWith("\"Opera"))
+            context.getCounter(UserAgent.OPERA).increment(1L);
+        else
+            context.getCounter(UserAgent.OTHER).increment(1L);
+
         context.write(new Text(ip), new IpStatisticsWritable(new LongWritable(bytesTransferred), one));
     }
 }

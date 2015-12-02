@@ -1,8 +1,5 @@
 package hadoop.course.task3;
 
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mrunit.mapreduce.MapDriver;
 import org.junit.Test;
 
 import java.io.IOException;

@@ -12,6 +12,7 @@ public class Trunc {
 
         if(args.length < 3){
             System.out.println("Usage: trunc <input file> <output file> <line count>");
+            System.exit(-1);
         }
 
         String inputUri = args[0], outputUri=args[1];
@@ -26,5 +27,9 @@ public class Trunc {
             bw.write(br.readLine());
             bw.newLine();
         }
+
+        br.close();
+        bw.close();
+
     }
 }
