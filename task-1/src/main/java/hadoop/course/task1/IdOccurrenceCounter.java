@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class IdOccurrenceCounter {
     public static void main(String[] args) throws IOException {
 
-        if(args.length < 2){
+        if (args.length < 2) {
             System.out.println("Usage: ipinyou <input directory> <output file>");
             System.exit(-1);
         }
@@ -26,19 +26,19 @@ public class IdOccurrenceCounter {
 
         //First thing that came to mind, sorry
 
-        HashMap<String, Long> occurrences = new HashMap<>(1000);
+        HashMap<String, Integer> occurrences = new HashMap<>();
         IPinYouParser parser = new IPinYouParser();
         String line;
         String id;
-        Long prev;
+        Integer prev;
 
         FileStatus[] fileStatuses = fs.listStatus(new Path(inputUri));
 
-        for(FileStatus fileStatus: fileStatuses){
-            if(fileStatus.isFile()){
+        for (FileStatus fileStatus : fileStatuses) {
+            if (fileStatus.isFile()) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(fileStatus.getPath())));
-                while((line = br.readLine()) != null){
-                    if(parser.parse(line)) {
+                while ((line = br.readLine()) != null) {
+                    if (parser.parse(line)) {
                         id = parser.getIPinYouId();
                         prev = occurrences.get(id);
                         occurrences.put(id, prev == null ? 1 : prev + 1);
@@ -48,16 +48,15 @@ public class IdOccurrenceCounter {
             }
         }
 
-        ArrayList<HashMap.Entry<String, Long>> entries = new ArrayList<>(occurrences.entrySet());
+        ArrayList<HashMap.Entry<String, Integer>> entries = new ArrayList<>(occurrences.entrySet());
 
-        Comparator<HashMap.Entry<String, Long>> descValueComparator =
-                (e1, e2) -> e1.getValue() < e2.getValue() ? 1 : e1.getValue() > e2.getValue() ? -1 : 0;
+        Comparator<HashMap.Entry<String, Integer>> descValueComparator = (e1, e2) -> e2.getValue() - e1.getValue();
 
         Collections.sort(entries, descValueComparator);
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fs.create(new Path(outputUri))));
 
-        for (HashMap.Entry<String, Long> e : entries){
+        for (HashMap.Entry<String, Integer> e : entries) {
             bw.write(e.getKey() + '\t' + e.getValue());
             bw.newLine();
         }
